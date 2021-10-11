@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - name: Debugging
+        run: ls
       - name: Install Packages
         run: yarn add
       - name: Run Tests
