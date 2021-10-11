@@ -23,6 +23,6 @@ jobs:
       - name: Debugging
         run: ls
       - name: Install Packages
-        run: yarn add
+        run: yarn install
       - name: Run Tests
         run: yarn test
