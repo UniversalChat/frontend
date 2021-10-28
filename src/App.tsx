@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import ChannelsList from "./components/ChannelsList";
+import ChannelsList from "./components/ChannelsList/";
 
 function App() {
   const [selected, setSelected] = useState({

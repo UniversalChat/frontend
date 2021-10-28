@@ -14,6 +14,7 @@ const Container = tw.div`
   dark:focus:border-opacity-100
   dark:focus:border-gray-50
   focus:border-gray-800
+  min-h-screen
 `;
 
 const ServerTitle = tw.h1`
