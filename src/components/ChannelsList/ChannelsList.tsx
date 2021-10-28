@@ -102,6 +102,9 @@ type Props = {
   onSelect: (selection: Selection) => void;
 };
 
+/**
+ * Displays a list of channels by group and provides facilities for accessible use.
+ */
 function ChannelsList({
   groups,
   channelsByGroup,
@@ -185,17 +188,14 @@ function ChannelsList({
 
       const nextChannelName = channelsByGroup[nextGroupName][nextChannelIndex];
       channelElements.current[nextGroupName][nextChannelName].focus();
+      event.stopPropagation();
     }
 
     if (event.code === "ArrowRight") {
       // Select this
       onSelect({ group: groupName, channel: channelName });
+      event.stopPropagation();
     }
-
-    // Don't "bubble up" this event, which would result in keydown of any
-    // parent elements also being called until one handler calls stopPropagation
-    // or the body element is reached
-    event.stopPropagation();
   };
 
   return (
