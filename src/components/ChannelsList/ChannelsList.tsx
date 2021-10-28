@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, Fragment } from "react";
 import { Hash } from "react-feather";
 import tw from "tailwind-styled-components";
 
@@ -203,11 +203,11 @@ function ChannelsList({
       <ServerTitle id={titleId} role="presentation">
         {serverName}
       </ServerTitle>
-      {Object.keys(channelsByGroup).map((groupName) => {
+      {groups.map((groupName) => {
         const groupChannels = channelsByGroup[groupName];
         const groupId = groupName.replaceAll(" ", "");
         return (
-          <>
+          <Fragment key={groupName}>
             <GroupContainer role="group" aria-label={groupName}>
               <GroupTitle id={groupId} role="presentation">
                 {groupName}
@@ -235,6 +235,7 @@ function ChannelsList({
                     onClick={() =>
                       onSelect({ group: groupName, channel: channelName })
                     }
+                    key={channelName + groupName}
                   >
                     <Hash
                       size={17}
@@ -248,8 +249,9 @@ function ChannelsList({
                 );
               })}
             </GroupContainer>
-          </>
+          </Fragment>
         );
+        Object.keys(channelsByGroup);
       })}
     </Container>
   );
