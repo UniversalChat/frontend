@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import ChannelsList from "./components/ChannelsList/";
+import { ShortcutProvider } from "./contexts/ShortcutContext/ShortcutContext";
 
 function App() {
   const [selected, setSelected] = useState({
@@ -9,7 +10,7 @@ function App() {
   });
 
   return (
-    <>
+    <ShortcutProvider>
       <ChannelsList
         groups={["Group 1", "Group 2"]}
         channelsByGroup={{
@@ -20,7 +21,7 @@ function App() {
         onSelect={(selection) => setSelected(selection)}
         serverName="CS222 Discord"
       />
-    </>
+    </ShortcutProvider>
   );
 }
 
