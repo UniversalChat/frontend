@@ -114,7 +114,7 @@ function ChannelsList({
 }: Props) {
   // We need to uniquely identify the header element so that we can indicate
   // for screen readers that it labels the list of channels
-  const titleId = serverName.replaceAll(" ", "") + "-label";
+  const titleId = serverName.replaceAll(" ", "_") + "-label";
 
   // We store a map of the form {groupName: {channelName: <element>}}
   // so that we can programmatically bring screen reader focus to
@@ -177,7 +177,7 @@ function ChannelsList({
         if (currentChannelIndex + 1 < channelsInGroup.length) {
           nextChannelIndex = currentChannelIndex + 1;
         } else {
-          if (currentGroupIndex + 1 >= Object.keys(channelsByGroup).length) {
+          if (currentGroupIndex + 1 >= groups.length) {
             nextGroupName = groups[0];
           } else {
             nextGroupName = groups[currentGroupIndex + 1];
@@ -191,7 +191,7 @@ function ChannelsList({
       event.stopPropagation();
     }
 
-    if (event.code === "ArrowRight") {
+    if (event.code === "ArrowRight" || event.code === "Enter") {
       // Select this
       onSelect({ group: groupName, channel: channelName });
       event.stopPropagation();
@@ -205,7 +205,7 @@ function ChannelsList({
       </ServerTitle>
       {groups.map((groupName) => {
         const groupChannels = channelsByGroup[groupName];
-        const groupId = groupName.replaceAll(" ", "");
+        const groupId = groupName.replaceAll(" ", "_");
         return (
           <Fragment key={groupName}>
             <GroupContainer role="group" aria-label={groupName}>
@@ -251,7 +251,6 @@ function ChannelsList({
             </GroupContainer>
           </Fragment>
         );
-        Object.keys(channelsByGroup);
       })}
     </Container>
   );

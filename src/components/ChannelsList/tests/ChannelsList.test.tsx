@@ -214,3 +214,36 @@ it("selects a channel when right arrow is pressed", () => {
 
   expect(onSelectMock).toBeCalledWith({ group: "A", channel: "1" });
 });
+
+it("selects a channel when enter is pressed", () => {
+  const onSelectMock = jest.fn();
+
+  render(
+    <ChannelsList
+      groups={["A", "B", "C"]}
+      channelsByGroup={{ A: ["1", "2"], B: ["2", "3", "4"], C: ["5"] }}
+      serverName="Server name"
+      selected={{ group: "A", channel: "2" }}
+      onSelect={onSelectMock}
+    />
+  );
+
+  userEvent.tab(); // going from document to channels list
+  userEvent.tab(); // going from channels list to an individual channel
+
+  fireEvent.keyDown(document.activeElement as HTMLElement, {
+    code: "ArrowUp",
+    key: "ArrowUp",
+    which: 38,
+    keyCode: 38,
+  });
+
+  fireEvent.keyDown(document.activeElement as HTMLElement, {
+    code: "Enter",
+    key: "Enter",
+    which: 13,
+    keyCode: 13,
+  });
+
+  expect(onSelectMock).toBeCalledWith({ group: "A", channel: "1" });
+});
