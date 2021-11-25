@@ -1,6 +1,7 @@
-import { useRef, Fragment } from "react";
+import React from "react";
 import { Hash } from "react-feather";
 import tw from "tailwind-styled-components";
+import AccessibleList from "../AccessibleList/AccessibleList";
 
 const Container = tw.div`
   bg-gray-100
@@ -69,14 +70,29 @@ const Channel = tw.li<ChannelProps>`
     props.$selected ? "dark:bg-gray-500 bg-gray-300 font-bold" : ""}
 `;
 
+type ItemProps = {
+  $selected: boolean;
+  selected: boolean;
+  item: string;
+};
+const ItemContainer = React.forwardRef((props: ItemProps, ref) => {
+  return (
+    <Channel {...props} ref={ref}>
+      <Hash
+        size={17}
+        className="mr-2"
+        strokeWidth={props.selected ? 2.5 : 2}
+        role="presentation"
+        aria-hidden="true"
+      />{" "}
+      {props.item}
+    </Channel>
+  );
+});
+
 type Selection = {
   channel: string;
   group: string;
-};
-
-type ChannelInstance = {
-  channelName: string;
-  groupName: string;
 };
 
 type Props = {
@@ -112,147 +128,22 @@ function ChannelsList({
   onSelect,
   serverName,
 }: Props) {
-  // We need to uniquely identify the header element so that we can indicate
-  // for screen readers that it labels the list of channels
-  const titleId = serverName.replaceAll(" ", "_") + "-label";
-
-  // We store a map of the form {groupName: {channelName: <element>}}
-  // so that we can programmatically bring screen reader focus to
-  // an arbitrary channel. This is initially empty and is populated by
-  // calls to `setElementRef`. We use a map {channelName: <element>} instead
-  // of an array [<element>] because it makes it simpler to deal with the case
-  // of props being updated and adding a channel in the middle of a group
-  // for exampe {a: [1,2,3]} -> {a: [1,0,2,3]}.
-  const channelElements = useRef<{
-    [key: string]: { [key: string]: HTMLLIElement };
-  }>({});
-
-  /**
-   * Updates the stored reference to the HTML element for the `channelName` in `groupName`
-   * @param groupName the name of the group
-   * @param channelName the name of the channel
-   * @param element reference to the HTML element
-   */
-  const setElementRef = (
-    { channelName, groupName }: ChannelInstance,
-    element: HTMLLIElement
-  ) => {
-    if (!(groupName in channelElements.current)) {
-      channelElements.current[groupName] = {};
-    }
-    channelElements.current[groupName][channelName] = element;
-  };
-
-  /**
-   * Manages keypress actions for behavior specific to this component. On up
-   * and down arrow key presses, updates the focus of channels in the sidebar,
-   * and on a right arrow keypress selects a channel.
-   */
-  const handleKeydown = (
-    { channelName, groupName }: ChannelInstance,
-    event: React.KeyboardEvent<HTMLLIElement>
-  ) => {
-    if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-      const channelsInGroup = channelsByGroup[groupName];
-      const currentGroupIndex = groups.indexOf(groupName);
-      const currentChannelIndex = channelsInGroup.indexOf(channelName);
-
-      let nextGroupName = groupName;
-      let nextChannelIndex = currentChannelIndex;
-
-      if (event.code === "ArrowUp") {
-        if (currentChannelIndex - 1 >= 0) {
-          nextChannelIndex = currentChannelIndex - 1;
-        } else {
-          if (currentGroupIndex === 0) {
-            nextGroupName = groups[groups.length - 1];
-          } else {
-            nextGroupName = groups[currentGroupIndex - 1];
-          }
-          nextChannelIndex = channelsByGroup[nextGroupName].length - 1;
-        }
-      }
-
-      if (event.code === "ArrowDown") {
-        if (currentChannelIndex + 1 < channelsInGroup.length) {
-          nextChannelIndex = currentChannelIndex + 1;
-        } else {
-          if (currentGroupIndex + 1 >= groups.length) {
-            nextGroupName = groups[0];
-          } else {
-            nextGroupName = groups[currentGroupIndex + 1];
-          }
-          nextChannelIndex = 0;
-        }
-      }
-
-      const nextChannelName = channelsByGroup[nextGroupName][nextChannelIndex];
-      channelElements.current[nextGroupName][nextChannelName].focus();
-      event.stopPropagation();
-    }
-
-    if (event.code === "ArrowRight" || event.code === "Enter") {
-      // Select this
-      onSelect({ group: groupName, channel: channelName });
-      event.stopPropagation();
-    }
-  };
-
   return (
-    <Container role="listbox" tabIndex={0} aria-labelledby={titleId}>
-      <ServerTitle id={titleId} role="presentation">
-        {serverName}
-      </ServerTitle>
-      {groups.map((groupName) => {
-        const groupChannels = channelsByGroup[groupName];
-        const groupId = groupName.replaceAll(" ", "_");
-        return (
-          <Fragment key={groupName}>
-            <GroupContainer role="group" aria-label={groupName}>
-              <GroupTitle id={groupId} role="presentation">
-                {groupName}
-              </GroupTitle>
-              {groupChannels.map((channelName) => {
-                const channelSelected =
-                  groupName === selected.group &&
-                  channelName === selected.channel;
-                return (
-                  <Channel
-                    $selected={channelSelected}
-                    id={`${groupId}-${channelName}`}
-                    role="option"
-                    aria-selected={channelSelected}
-                    tabIndex={channelSelected ? 0 : -1}
-                    onKeyDown={(event) =>
-                      handleKeydown({ groupName, channelName }, event)
-                    }
-                    ref={(ref) =>
-                      setElementRef(
-                        { groupName, channelName },
-                        ref as HTMLLIElement
-                      )
-                    }
-                    onClick={() =>
-                      onSelect({ group: groupName, channel: channelName })
-                    }
-                    key={channelName + groupName}
-                  >
-                    <Hash
-                      size={17}
-                      className="mr-2"
-                      strokeWidth={channelSelected ? 2.5 : 2}
-                      role="presentation"
-                      aria-hidden="true"
-                    />{" "}
-                    {channelName}
-                  </Channel>
-                );
-              })}
-            </GroupContainer>
-          </Fragment>
-        );
-      })}
-    </Container>
+    <AccessibleList
+      title={serverName}
+      sections={groups}
+      itemsBySection={channelsByGroup}
+      selected={{ item: selected.channel, section: selected.group }}
+      onSelect={({ item, section }) => {
+        onSelect({ channel: item, group: section });
+      }}
+      listContainer={Container}
+      ulContainer={GroupContainer}
+      titleContainer={ServerTitle}
+      sectionTitleContainer={GroupTitle}
+      itemContainer={ItemContainer}
+      getItemName={(i) => i}
+    />
   );
 }
 
