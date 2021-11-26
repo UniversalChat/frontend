@@ -207,9 +207,6 @@ function AccessibleList<T>({
               {itemsBySection[section].map((item) => {
                 const itemSelected =
                   section === selected.section && item === selected.item;
-                if (itemSelected) {
-                  console.log("item " + item + " is selected");
-                }
                 const itemId = getItemName(item).replaceAll(" ", "_");
                 return (
                   <ItemContainer
@@ -224,7 +221,6 @@ function AccessibleList<T>({
                       handleKeydown({ item, sectionName: section }, event)
                     }
                     ref={(ref: any) => {
-                      console.log("set element ref");
                       setElementRef(
                         { itemName: getItemName(item), sectionName: section },
                         ref as HTMLLIElement
