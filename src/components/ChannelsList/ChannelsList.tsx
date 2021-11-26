@@ -1,7 +1,7 @@
 import React from "react";
 import { Hash } from "react-feather";
 import tw from "tailwind-styled-components";
-import AccessibleList from "../AccessibleList/AccessibleList";
+import AccessibleList from "../AccessibleList/";
 
 const Container = tw.div`
   bg-gray-100
