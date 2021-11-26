@@ -69,7 +69,9 @@ type Props<T> = {
     id: string | undefined;
   }>;
   /**
-   * An `li` that displays a given item
+   * An `li` that displays a given item. We also set the $selected prop
+   * to true (as well as selected) for compatibility with `tw.li` and setting
+   * custom selected styles.
    */
   itemContainer: ComponentType<{
     item: T;
@@ -87,6 +89,7 @@ type Props<T> = {
    */
   getItemName: (item: T) => string;
 };
+
 /**
  * Creates a keyboard-nagivatable, screen-reader accessible
  * list from the provided sections and items.
