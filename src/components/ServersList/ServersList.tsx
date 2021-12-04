@@ -1,16 +1,14 @@
 import React from "react";
-import { Hash } from "react-feather";
 import tw from "tailwind-styled-components";
 import AccessibleList from "../AccessibleList/";
 
 const Container = tw.div`
-  bg-gray-100
-  dark:bg-gray-700
-  max-w-xs
-  w-64
+  bg-gray-700
+  dark:bg-gray-100
+  w-36
   h-full
   p-2
-  dark:border-gray-700
+  border-gray-700
   border-2
   focus:border-opacity-100
   dark:focus:border-opacity-100
@@ -21,10 +19,10 @@ const Container = tw.div`
 
 const ServerTitle = tw.h1`
   text-left
-  text-bold
-  text-2xl
-  text-gray-600
-  dark:text-gray-300
+  text-black
+  font-bold
+  text-gray-300
+  dark:text-gray-600
   mb-2
 `;
 
@@ -33,30 +31,20 @@ const GroupContainer = tw.ul`
   mb-5
 `;
 
-const GroupTitle = tw.li`
-  text-left
-  text-gray-600
-  dark:text-gray-300
-  text-base
-  uppercase
-  mb-2
-  ml-3
-`;
-
-type ChannelProps = {
+type ServerProps = {
   $selected: boolean;
 };
 
-const Channel = tw.li<ChannelProps>`
-  text-gray-800
-  dark:text-gray-50
+const Channel = tw.li<ServerProps>`
+  text-gray-50
+  dark:text-gray-800
   flex
   items-center
   py-1
-  mb-1
   px-3
-  hover:bg-gray-300
-  dark:hover:bg-gray-500
+  mb-1
+  hover:bg-gray-500
+  dark:hover:bg-gray-300
   rounded-lg
   cursor-pointer
   border-gray-800
@@ -68,7 +56,7 @@ const Channel = tw.li<ChannelProps>`
   dark:border-opacity-0
   focus:outline-none
   ${(props) =>
-    props.$selected ? "dark:bg-gray-500 bg-gray-300 font-bold" : ""}
+    props.$selected ? "dark:bg-gray-300 bg-gray-500 font-bold" : ""}
 `;
 
 type ItemProps = {
@@ -79,13 +67,6 @@ type ItemProps = {
 const ItemContainer = React.forwardRef((props: ItemProps, ref) => {
   return (
     <Channel {...props} ref={ref}>
-      <Hash
-        size={17}
-        className="mr-2"
-        strokeWidth={props.selected ? 2.5 : 2}
-        role="presentation"
-        aria-hidden="true"
-      />{" "}
       {props.item}
     </Channel>
   );
@@ -98,23 +79,19 @@ type Selection = {
 
 type Props = {
   /**
-   * The name of the chat server
-   */
-  serverName: string;
-  /**
-   * List of all of the channel groups in this list
+   * List of all of the server groups in this list
    */
   groups: Array<string>;
   /**
-   * Map of groups and their channels
+   * Map of groups and their servers
    */
-  channelsByGroup: { [key: string]: Array<string> };
+  serversByGroup: { [key: string]: Array<string> };
   /**
    * The user's current selection
    */
   selected: Selection;
   /**
-   * Function called when a new channel selection is made
+   * Function called when a new server selection is made
    */
   onSelect: (selection: Selection) => void;
 };
@@ -122,18 +99,12 @@ type Props = {
 /**
  * Displays a list of channels by group and provides facilities for accessible use.
  */
-function ChannelsList({
-  groups,
-  channelsByGroup,
-  selected,
-  onSelect,
-  serverName,
-}: Props) {
+function ChannelsList({ groups, serversByGroup, selected, onSelect }: Props) {
   return (
     <AccessibleList
-      title={serverName}
+      title={"Servers"}
       sections={groups}
-      itemsBySection={channelsByGroup}
+      itemsBySection={serversByGroup}
       selected={{ item: selected.channel, section: selected.group }}
       onSelect={({ item, section }) => {
         onSelect({ channel: item, group: section });
@@ -141,7 +112,7 @@ function ChannelsList({
       listContainer={Container}
       ulContainer={GroupContainer}
       titleContainer={ServerTitle}
-      sectionTitleContainer={GroupTitle}
+      sectionTitleContainer={ServerTitle}
       itemContainer={ItemContainer}
       getItemName={(i) => i}
     />
