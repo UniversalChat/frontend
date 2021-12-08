@@ -83,7 +83,7 @@ const ItemContainer = React.forwardRef((props: ItemProps, ref) => {
 });
 
 type Selection = {
-  channel: string;
+  server: string;
   group: string;
 };
 
@@ -109,15 +109,15 @@ type Props = {
 /**
  * Displays a list of channels by group and provides facilities for accessible use.
  */
-function ChannelsList({ groups, serversByGroup, selected, onSelect }: Props) {
+function ServerssList({ groups, serversByGroup, selected, onSelect }: Props) {
   return (
     <AccessibleList
       title={"Servers"}
       sections={groups}
       itemsBySection={serversByGroup}
-      selected={{ item: selected.channel, section: selected.group }}
+      selected={{ item: selected.server, section: selected.group }}
       onSelect={({ item, section }) => {
-        onSelect({ channel: item, group: section });
+        onSelect({ server: item, group: section });
       }}
       listContainer={Container}
       ulContainer={GroupContainer}
@@ -129,4 +129,4 @@ function ChannelsList({ groups, serversByGroup, selected, onSelect }: Props) {
   );
 }
 
-export default ChannelsList;
+export default ServerssList;
