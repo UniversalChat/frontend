@@ -17,7 +17,17 @@ const Container = tw.div`
   min-h-screen
 `;
 
-const ServerTitle = tw.h1`
+const ServersHeader = tw.h1`
+  text-left
+  text-black
+  text-2xl
+  font-bold
+  text-gray-300
+  dark:text-gray-600
+  mb-2
+`;
+
+const GroupTitle = tw.h1`
   text-left
   text-black
   font-bold
@@ -111,8 +121,8 @@ function ChannelsList({ groups, serversByGroup, selected, onSelect }: Props) {
       }}
       listContainer={Container}
       ulContainer={GroupContainer}
-      titleContainer={ServerTitle}
-      sectionTitleContainer={ServerTitle}
+      titleContainer={ServersHeader}
+      sectionTitleContainer={GroupTitle}
       itemContainer={ItemContainer}
       getItemName={(i) => i}
     />
